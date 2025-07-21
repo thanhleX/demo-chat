@@ -8,7 +8,7 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface MessageRoomMemberMapper {
     @Mapping(source = "user.username", target = "username")
-    @Mapping(source = "messageRoom.messageRoomId", target = "messageRoomId")
+    @Mapping(source = "messageRoom.id", target = "messageRoomId")
     @Mapping(source = "user.lastLogin", target = "lastLogin")
     MessageRoomMemberDto toDto(MessageRoomMember entity);
 
