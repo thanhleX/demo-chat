@@ -1,9 +1,10 @@
 package com.chronosx.demochatbe.mapper;
 
-import com.chronosx.demochatbe.dto.MessageRoomMemberDto;
-import com.chronosx.demochatbe.entity.MessageRoomMember;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+
+import com.chronosx.demochatbe.dto.MessageRoomMemberDto;
+import com.chronosx.demochatbe.entity.MessageRoomMember;
 
 @Mapper(componentModel = "spring")
 public interface MessageRoomMemberMapper {

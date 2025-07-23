@@ -1,6 +1,7 @@
 package com.chronosx.demochatbe.dto;
 
 import com.chronosx.demochatbe.enums.UserStatus;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 

@@ -1,9 +1,10 @@
 package com.chronosx.demochatbe.mapper;
 
-import com.chronosx.demochatbe.dto.MessageContentDto;
-import com.chronosx.demochatbe.entity.MessageContent;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+
+import com.chronosx.demochatbe.dto.MessageContentDto;
+import com.chronosx.demochatbe.entity.MessageContent;
 
 @Mapper(componentModel = "spring")
 public interface MessageContentMapper {

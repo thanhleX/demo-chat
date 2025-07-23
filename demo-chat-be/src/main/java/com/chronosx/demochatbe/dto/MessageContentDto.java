@@ -1,11 +1,12 @@
 package com.chronosx.demochatbe.dto;
 
-import com.chronosx.demochatbe.enums.MessageType;
-import lombok.*;
-import lombok.experimental.FieldDefaults;
-
 import java.time.LocalDateTime;
 import java.util.UUID;
+
+import com.chronosx.demochatbe.enums.MessageType;
+
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @Getter
 @Setter
