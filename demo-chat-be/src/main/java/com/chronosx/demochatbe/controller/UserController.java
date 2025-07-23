@@ -1,12 +1,11 @@
 package com.chronosx.demochatbe.controller;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.chronosx.demochatbe.dto.UserDto;
 import com.chronosx.demochatbe.service.UserService;
@@ -31,5 +30,16 @@ public class UserController {
     @SendTo("/topic/active") // Send the response to all clients subscribe to /topic/active
     public UserDto connect(@RequestBody UserDto request) {
         return userService.connect(request);
+    }
+
+    @MessageMapping("/user/disconnect") // Receives messages from clients sending to /app/user/disconnect
+    @SendTo("/topic/active") // Send the response to all clients subscribe to /topic/active
+    public UserDto disconnect(@RequestBody UserDto request) {
+        return userService.logout(request);
+    }
+
+    @GetMapping("/online")
+    public ResponseEntity<List<UserDto>> getOnlineUsers() {
+        return ResponseEntity.ok(userService.getOnlineUsers());
     }
 }

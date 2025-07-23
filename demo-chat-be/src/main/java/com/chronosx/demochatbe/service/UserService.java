@@ -1,6 +1,7 @@
 package com.chronosx.demochatbe.service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -31,17 +32,6 @@ public class UserService {
         return userMapper.toDto(user);
     }
 
-    public UserDto connect(UserDto request) {
-        Optional<User> user = userRepository.findById(request.getUsername());
-
-        user.ifPresent(u -> {
-            u.setStatus(UserStatus.ONLINE);
-            userRepository.save(u);
-        });
-
-        return user.map(userMapper::toDto).orElse(null);
-    }
-
     void validatePassword(UserDto request, String password) {
         if (!request.getPassword().equals(password)) throw new IllegalArgumentException("Invalid password");
     }
@@ -55,5 +45,34 @@ public class UserService {
         userRepository.save(user);
 
         return user;
+    }
+
+    public UserDto connect(UserDto request) {
+        Optional<User> user = userRepository.findById(request.getUsername());
+
+        user.ifPresent(u -> {
+            u.setStatus(UserStatus.ONLINE);
+            userRepository.save(u);
+        });
+
+        return user.map(userMapper::toDto).orElse(null);
+    }
+
+    public List<UserDto> getOnlineUsers() {
+        return userRepository.findAllByStatus(UserStatus.ONLINE).stream()
+                .map(userMapper::toDto)
+                .toList();
+    }
+
+    public UserDto logout(UserDto request) {
+        Optional<User> user = userRepository.findById(request.getUsername());
+
+        user.ifPresent(u -> {
+            u.setStatus(UserStatus.OFFLINE);
+            u.setLastLogin(LocalDateTime.now());
+            userRepository.save(u);
+        });
+
+        return user.map(userMapper::toDto).orElse(null);
     }
 }
