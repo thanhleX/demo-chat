@@ -1,4 +1,22 @@
-/* You can add global styles to this file, and also import other style files */
-@import "primeng/resources/themes/lara-light-blue/theme.css";
+@import "primeng/resources/themes/aura-light-blue/theme.css";
 @import "primeng/resources/primeng.css";
 @import "primeicons/primeicons.css";
+
+.p-dialog .p-dialog-header {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--surface-border);
+    margin-bottom: 1rem;
+}
+
+.p-dialog .p-dialog-header .p-dialog-title {
+    width: 100%;
+    text-align: center;
+    font-size: 1.125rem;
+}
+
+.p-dialog-header-icons {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 0.75rem 1rem;
+}

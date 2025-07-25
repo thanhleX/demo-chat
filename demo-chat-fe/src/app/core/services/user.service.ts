@@ -102,4 +102,9 @@ export class UserService {
     if (!username) return false;
     return this.activeUsers[username] === 'ONLINE';
   }
+
+  searchUsersByUsername(username: string) {
+    const url = this.apiUrl + '/search/' + username;
+    return this.http.get<User[]>(url);
+  }
 }
