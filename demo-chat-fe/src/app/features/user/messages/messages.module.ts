@@ -8,13 +8,18 @@ import { SharedModule } from '../../shared/shared.module';
 import { SelectUsersDialogComponent } from './select-users-dialog/select-users-dialog.component';
 import { PrimengModule } from '../../../primeng/primeng.module';
 import { FormsModule } from '@angular/forms';
+import { ConversationsListComponent } from './conversations-list/conversations-list.component';
+import { ConversationComponent } from './conversation/conversation.component';
+import { CoreModule } from '../../../core/core.module';
 
 
 @NgModule({
   declarations: [
     MessagesComponent,
     ActiveUsersListComponent,
-    SelectUsersDialogComponent
+    SelectUsersDialogComponent,
+    ConversationsListComponent,
+    ConversationComponent
   ],
   imports: [
     CommonModule,
@@ -22,6 +27,7 @@ import { FormsModule } from '@angular/forms';
     SharedModule,
     PrimengModule,
     FormsModule,
+    CoreModule,
   ]
 })
 export class MessagesModule { }

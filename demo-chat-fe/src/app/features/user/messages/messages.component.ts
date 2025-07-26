@@ -10,15 +10,10 @@ import { MessageRoom } from '../../../core/interfaces/message-room';
   styleUrl: './messages.component.scss'
 })
 export class MessagesComponent {
-  /**
-   * 1. connect /api/ws
-   * 2. subscribe /topic/active
-   * 3. send connect to others /app/user/connect
-   */
-
   currentUser: User = {};
   activeUsersSubscription: any;
   isShowDialogChat: boolean = false;
+  selectedMessageRoom: MessageRoom = {};
 
   constructor(private userService: UserService, private messageRoomService: MessageRoomService) { }
 
@@ -40,7 +35,7 @@ export class MessagesComponent {
 
     const usernames = selectedUsers.map(u => u.username).filter((u): u is string => u !== undefined);
     if (this.currentUser.username) usernames.push(this.currentUser.username);
-    
+
     this.messageRoomService.findMessageRoomByMembers(usernames).subscribe({
       next: (foundMessageRoom: MessageRoom) => {
         console.log('foundMessageRoom', foundMessageRoom);
@@ -51,14 +46,7 @@ export class MessagesComponent {
           this.messageRoomService.createChatRoom(this.currentUser.username, usernames).subscribe({
             next: (createdMessageRoom: MessageRoom) => {
               console.log('createdMessageRoom', createdMessageRoom);
-              // find room at least one content
-              if (!this.currentUser.username) return;
-              this.messageRoomService.findChatRoomAtLeastOneContent(this.currentUser.username).subscribe({
-                next: (rooms: MessageRoom[]) => {
-                  console.log('rooms', rooms);
-                },
-                error: (err) => console.log(err)
-              });
+
             },
             error: (err) => console.log(err)
           });
@@ -68,5 +56,8 @@ export class MessagesComponent {
     });
   }
 
-
+  selectMessageRoom(room: MessageRoom) {
+    console.log(room);
+    this.selectedMessageRoom = room;
+  }
 }
