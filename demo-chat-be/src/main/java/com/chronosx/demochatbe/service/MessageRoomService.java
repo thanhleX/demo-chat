@@ -7,7 +7,9 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.chronosx.demochatbe.dto.MessageContentDto;
 import com.chronosx.demochatbe.dto.MessageRoomDto;
+import com.chronosx.demochatbe.dto.MessageRoomMemberDto;
 import com.chronosx.demochatbe.entity.*;
 import com.chronosx.demochatbe.mapper.MessageRoomMapper;
 import com.chronosx.demochatbe.repository.MessageRoomRepository;
@@ -25,6 +27,9 @@ public class MessageRoomService {
     UserRepository userRepository;
 
     MessageRoomMapper messageRoomMapper;
+
+    MessageContentService messageContentService;
+    MessageRoomMemberService messageRoomMemberService;
 
     public MessageRoomDto findChatRoom(List<String> members) {
         return messageRoomRepository
@@ -74,7 +79,17 @@ public class MessageRoomService {
 
     public List<MessageRoomDto> findChatRoomAtLeastOneContent(String username) {
         return messageRoomRepository.findChatRoomAtLeastOneContent(username).stream()
-                .map(messageRoomMapper::toDto)
+                .map(m -> {
+                    MessageRoomDto roomDto = messageRoomMapper.toDto(m);
+
+                    MessageContentDto lastMessage = messageContentService.getLastMessage(roomDto.getId());
+                    roomDto.setLastMessage(lastMessage);
+
+                    List<MessageRoomMemberDto> members = messageRoomMemberService.findByMessageRoomId(roomDto.getId());
+                    roomDto.setMembers(members);
+
+                    return roomDto;
+                })
                 .toList();
     }
 }
