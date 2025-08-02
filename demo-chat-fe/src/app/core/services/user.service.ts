@@ -23,9 +23,7 @@ export class UserService {
       OFFLINE: 'OFFLINE',
     }
 
-  constructor(private http: HttpClient) {
-    console.log(environment);
-  }
+  constructor(private http: HttpClient) { }
 
   login(user: User): Observable<User> {
     return this.http.post<User>(this.apiUrl, user);

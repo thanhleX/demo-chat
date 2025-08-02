@@ -6,7 +6,7 @@
         </div>
         <div class="p-fluid">
             <p-password [(ngModel)]="user.password" placeholder="Password" [feedback]="false" [toggleMask]="true"
-                name="password" />
+                name="password" (keydown.enter)="login()"/>
         </div>
         <div class="p-fluid mt-2">
             <p-button (click)="login()" label="Login" [disabled]="!user.username || !user.password"></p-button>

@@ -3,6 +3,8 @@ import { User } from '../../../core/interfaces/user';
 import { UserService } from '../../../core/services/user.service';
 import { MessageRoomService } from '../../../core/services/message-room.service';
 import { MessageRoom } from '../../../core/interfaces/message-room';
+import { MessageContentService } from '../../../core/services/message-content.service';
+import { MessageContent, MessageType } from '../../../core/interfaces/message-content';
 
 @Component({
   selector: 'app-messages',
@@ -14,19 +16,26 @@ export class MessagesComponent {
   activeUsersSubscription: any;
   isShowDialogChat: boolean = false;
   selectedMessageRoom: MessageRoom = {};
+  messageToSend: MessageContent = {};
 
-  constructor(private userService: UserService, private messageRoomService: MessageRoomService) { }
+  constructor(
+    private userService: UserService,
+    private messageRoomService: MessageRoomService,
+    private messageContentService: MessageContentService) { }
 
   ngOnInit() {
     this.currentUser = this.userService.getFromLocalStoge();
     this.userService.connect(this.currentUser);
+    this.messageContentService.connect(this.currentUser);
     window.addEventListener('beforeunload', () => {
       this.userService.disconnect(this.currentUser);
     });
+    this.subscribeMessages();
   }
 
   ngOnDestroy() {
     this.userService.disconnect(this.currentUser);
+    this.messageContentService.disconnect(this.currentUser);
   }
 
   chat(selectedUsers: User[]) {
@@ -59,5 +68,44 @@ export class MessagesComponent {
   selectMessageRoom(room: MessageRoom) {
     console.log(room);
     this.selectedMessageRoom = room;
+    this.getMessagesByRoomId();
+  }
+
+  getMessagesByRoomId() {
+    this.messageContentService.getMessagesByRoomId(this.selectedMessageRoom.id).subscribe({
+      next: (messages: MessageContent[]) => {
+        this.selectedMessageRoom.messages = messages;
+      }, error: (error: any) => {
+        console.log(error);
+      }
+    });
+  }
+
+  subscribeMessages() {
+    this.messageContentService.subscribeMessagesObservable().subscribe({
+      next: (messageContent: MessageContent) => {
+
+        console.log('messageContent', messageContent);
+
+        this.selectedMessageRoom.messages?.push(messageContent);
+      }, error: (error: any) => {
+        console.log(error);
+      }
+    });
+  }
+
+  sendMessage() {
+    this.messageToSend = {
+      content: this.messageToSend.content,
+      messageRoomId: this.selectedMessageRoom.id,
+      sender: this.currentUser.username,
+      messageType: MessageType.TEXT
+    }
+
+    this.messageContentService.sendMessage(this.messageToSend);
+
+    console.log('this.messageToSend', this.messageToSend);
+
+    this.messageToSend = {};
   }
 }
