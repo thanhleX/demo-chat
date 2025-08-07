@@ -5,6 +5,9 @@ import { MessageRoomService } from '../../../core/services/message-room.service'
 import { MessageRoom } from '../../../core/interfaces/message-room';
 import { MessageContentService } from '../../../core/services/message-content.service';
 import { MessageContent, MessageType } from '../../../core/interfaces/message-content';
+import { Router } from '@angular/router';
+import { MessageRoomMemberService } from '../../../core/services/message-room-member.service';
+import { MessageRoomMember } from '../../../core/interfaces/message-room-member';
 
 @Component({
   selector: 'app-messages',
@@ -17,11 +20,14 @@ export class MessagesComponent {
   isShowDialogChat: boolean = false;
   selectedMessageRoom: MessageRoom = {};
   messageToSend: MessageContent = {};
+  messageRooms: MessageRoom[] = [];
 
   constructor(
-    private userService: UserService,
+    public userService: UserService,
     private messageRoomService: MessageRoomService,
-    private messageContentService: MessageContentService) { }
+    private messageContentService: MessageContentService,
+    private route: Router,
+    private messageRoomMemberService: MessageRoomMemberService) { }
 
   ngOnInit() {
     this.currentUser = this.userService.getFromLocalStoge();
@@ -30,12 +36,13 @@ export class MessagesComponent {
     window.addEventListener('beforeunload', () => {
       this.userService.disconnect(this.currentUser);
     });
+    this.findChatRoomAtLeastOneContent();
     this.subscribeMessages();
   }
 
   ngOnDestroy() {
     this.userService.disconnect(this.currentUser);
-    this.messageContentService.disconnect(this.currentUser);
+    this.messageContentService.disconnect();
   }
 
   chat(selectedUsers: User[]) {
@@ -55,10 +62,19 @@ export class MessagesComponent {
           this.messageRoomService.createChatRoom(this.currentUser.username, usernames).subscribe({
             next: (createdMessageRoom: MessageRoom) => {
               console.log('createdMessageRoom', createdMessageRoom);
-
+              this.messageRooms.push(createdMessageRoom);
+              this.selectMessageRoom(createdMessageRoom);
             },
             error: (err) => console.log(err)
           });
+        } else {
+          const room = this.messageRooms.filter(r => r.id === foundMessageRoom.id)[0];
+          if (room)
+            this.selectMessageRoom(room);
+          else {
+            this.messageRooms.push(foundMessageRoom);
+            this.selectMessageRoom(foundMessageRoom);
+          }
         }
       },
       error: (err) => console.log(err)
@@ -67,7 +83,13 @@ export class MessagesComponent {
 
   selectMessageRoom(room: MessageRoom) {
     console.log(room);
+    if (this.selectedMessageRoom.id)
+      this.updateLastSeen(this.selectedMessageRoom.id, this.currentUser.username);
+
     this.selectedMessageRoom = room;
+    if (this.selectedMessageRoom.id)
+      this.updateLastSeen(this.selectedMessageRoom.id, this.currentUser.username);
+
     this.getMessagesByRoomId();
   }
 
@@ -75,6 +97,7 @@ export class MessagesComponent {
     this.messageContentService.getMessagesByRoomId(this.selectedMessageRoom.id).subscribe({
       next: (messages: MessageContent[]) => {
         this.selectedMessageRoom.messages = messages;
+        this.scrollToBottom();
       }, error: (error: any) => {
         console.log(error);
       }
@@ -84,10 +107,30 @@ export class MessagesComponent {
   subscribeMessages() {
     this.messageContentService.subscribeMessagesObservable().subscribe({
       next: (messageContent: MessageContent) => {
-
-        console.log('messageContent', messageContent);
-
-        this.selectedMessageRoom.messages?.push(messageContent);
+        // this.selectedMessageRoom.messages?.push(messageContent);
+        if (messageContent.messageRoomId === this.selectedMessageRoom.id) {
+          this.selectedMessageRoom.lastMessage = messageContent;
+          this.selectedMessageRoom.messages?.push(messageContent);
+          this.scrollToBottom();
+        } else {
+          const roomToPush = this.messageRooms?.filter(r => r.id === messageContent.messageRoomId)[0];
+          if (roomToPush) {
+            roomToPush.lastMessage = messageContent;
+            roomToPush.unseenCount = (roomToPush.unseenCount ?? 0) + 1;
+            this.messageRooms = this.messageRooms.filter(r => r.id !== messageContent.messageRoomId);
+            this.messageRooms.unshift(roomToPush);
+          } else {
+            this.messageRoomService.findById(messageContent.messageRoomId).subscribe({
+              next: (room: MessageRoom) => {
+                room.lastMessage = messageContent;
+                room.unseenCount = 1;
+                this.messageRooms.unshift(room);
+              }, error: (error: any) => {
+                console.log(error);
+              }
+            });
+          }
+        }
       }, error: (error: any) => {
         console.log(error);
       }
@@ -107,5 +150,45 @@ export class MessagesComponent {
     console.log('this.messageToSend', this.messageToSend);
 
     this.messageToSend = {};
+  }
+
+  logout() {
+    this.userService.disconnect(this.currentUser);
+    this.messageContentService.disconnect();
+    this.userService.removeFromLocalStorage();
+    this.route.navigate(['/login']);
+  }
+
+  updateLastSeen(roomId?: string, username?: string) {
+    this.messageRoomMemberService.updateLastSeen(roomId, username).subscribe({
+      next: (member: MessageRoomMember) => {
+        this.selectedMessageRoom.unseenCount = 0;
+      }, error: (error: any) => {
+        console.log(error);
+      }
+    });
+  }
+
+  findChatRoomAtLeastOneContent() {
+    // find room at least one content
+    if (!this.currentUser.username) return;
+    this.messageRoomService.findChatRoomAtLeastOneContent(this.currentUser.username).subscribe({
+      next: (rooms: MessageRoom[]) => {
+        console.log('rooms', rooms);
+        this.messageRooms = rooms;
+      },
+      error: (err) => console.log(err)
+    });
+  }
+
+  scrollToBottom() {
+    setTimeout(() => {
+      const chat = document.getElementById('chat-area');
+      if (chat) chat.scrollTop = chat.scrollHeight;
+    }, 100);
+  }
+
+  findMessageRoomById(roomId?: string) {
+
   }
 }

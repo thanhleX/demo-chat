@@ -5,6 +5,8 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { CompatClient, Stomp } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
+import { MessageRoom } from '../interfaces/message-room';
+import { TimeAgoPipe } from '../pipes/time-ago.pipe';
 
 @Injectable({
   providedIn: 'root'
@@ -23,7 +25,9 @@ export class UserService {
       OFFLINE: 'OFFLINE',
     }
 
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient,
+    private timeAgo: TimeAgoPipe) { }
 
   login(user: User): Observable<User> {
     return this.http.post<User>(this.apiUrl, user);
@@ -38,6 +42,10 @@ export class UserService {
 
   getFromLocalStoge(): User {
     return JSON.parse(localStorage.getItem('user') ?? '{}');
+  }
+
+  removeFromLocalStorage() {
+    localStorage.removeItem('user');
   }
 
   connect(user: User) {
@@ -104,5 +112,18 @@ export class UserService {
   searchUsersByUsername(username: string) {
     const url = this.apiUrl + '/search/' + username;
     return this.http.get<User[]>(url);
+  }
+
+  getRoomStatus(room: MessageRoom): string {
+    const members = room?.members?.filter(m => m.username != this.getFromLocalStoge().username);
+    const membersOnline = members?.filter(m => this.getUserStatus(m.username));
+
+    if (membersOnline && membersOnline.length > 0)
+      return 'Online';
+
+    if (room.isGroup)
+      return 'Offline';
+    else
+      return this.timeAgo.transform(members?.[0].lastLogin) ?? '';
   }
 }
