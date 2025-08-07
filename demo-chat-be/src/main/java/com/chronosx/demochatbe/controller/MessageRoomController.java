@@ -1,6 +1,7 @@
 package com.chronosx.demochatbe.controller;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,5 +34,10 @@ public class MessageRoomController {
     @GetMapping("/find-chat-room-at-least-one-content/{username}")
     public ResponseEntity<List<MessageRoomDto>> findChatRoomAtLeastOneContent(@PathVariable String username) {
         return ResponseEntity.ok(messageRoomService.findChatRoomAtLeastOneContent(username));
+    }
+
+    @GetMapping("/{roomId}")
+    public ResponseEntity<MessageRoomDto> findById(@PathVariable UUID roomId) {
+        return ResponseEntity.ok(messageRoomService.findById(roomId));
     }
 }

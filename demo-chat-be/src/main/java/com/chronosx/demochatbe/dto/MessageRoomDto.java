@@ -21,4 +21,5 @@ public class MessageRoomDto {
     String createdBy;
     MessageContentDto lastMessage;
     List<MessageRoomMemberDto> members;
+    Long unseenCount;
 }

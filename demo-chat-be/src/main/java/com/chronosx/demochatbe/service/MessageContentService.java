@@ -42,6 +42,10 @@ public class MessageContentService {
         return messageContentMapper.toDto(messageContent);
     }
 
+    public Long countUnseenMessages(UUID roomId, String username) {
+        return messageContentRepository.countUnseenMessages(roomId, username);
+    }
+
     private MessageContent toEntity(MessageContentDto request) {
         MessageContent entity = messageContentMapper.toEntity(request);
 

@@ -3,6 +3,7 @@ package com.chronosx.demochatbe.service;
 import java.util.List;
 import java.util.UUID;
 
+import com.chronosx.demochatbe.entity.MessageRoomMember;
 import org.springframework.stereotype.Service;
 
 import com.chronosx.demochatbe.dto.MessageRoomMemberDto;
@@ -26,4 +27,13 @@ public class MessageRoomMemberService {
                 .map(messageRoomMemberMapper::toDto)
                 .toList();
     }
+
+    public MessageRoomMemberDto updateLastSeen(UUID roomId, String username) {
+        MessageRoomMember member = messageRoomMemberRepository.findByMessageRoomIdAndUserUsername(roomId, username);
+
+        member.setLastSeen(java.time.LocalDateTime.now());
+
+        return messageRoomMemberMapper.toDto(messageRoomMemberRepository.save(member));
+    }
+
 }
