@@ -11,3 +11,6 @@ spring:
 
 api:
   prefix: '/api/v1'
+
+backend:
+  url: 'http://localhost:8080'

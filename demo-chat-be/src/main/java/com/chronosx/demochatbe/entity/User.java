@@ -3,6 +3,7 @@ package com.chronosx.demochatbe.entity;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.chronosx.demochatbe.utils.FileUtils;
 import jakarta.persistence.*;
 
 import com.chronosx.demochatbe.enums.UserStatus;
@@ -38,4 +39,13 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     List<MessageRoomMember> messageRoomMembers;
+
+    public String getAvatarUrl() {
+        if (avatarUrl == null) return null;
+        return FileUtils.getAvatarUrl(avatarUrl);
+    }
+
+    public String getAvatarShortUrl() {
+        return avatarUrl;
+    }
 }

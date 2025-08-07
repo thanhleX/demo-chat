@@ -1,9 +1,11 @@
 package com.chronosx.demochatbe.service;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import com.chronosx.demochatbe.utils.FileUtils;
 import org.springframework.stereotype.Service;
 
 import com.chronosx.demochatbe.dto.UserDto;
@@ -15,6 +17,7 @@ import com.chronosx.demochatbe.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -80,5 +83,22 @@ public class UserService {
         return userRepository.findAllByUsernameContainingIgnoreCase(username).stream()
                 .map(userMapper::toDto)
                 .toList();
+    }
+
+    public UserDto uploadAvatar(MultipartFile file, String username) throws IOException {
+        Optional<User> user = userRepository.findById(username);
+
+        if (user.isPresent()) {
+            if (user.get().getAvatarUrl() != null) {
+                // delete
+                FileUtils.deleteFile("/" + FileUtils.FOLDER_AVATARS + "/" + user.get().getAvatarShortUrl());
+
+                // upload
+                String newFileName = FileUtils.storeFile(file, FileUtils.FOLDER_AVATARS);
+                user.get().setAvatarUrl(newFileName);
+                userRepository.save(user.get());
+            }
+        }
+        return userMapper.toDto(user.orElse(null));
     }
 }

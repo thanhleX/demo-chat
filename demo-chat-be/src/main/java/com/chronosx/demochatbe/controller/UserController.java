@@ -1,5 +1,6 @@
 package com.chronosx.demochatbe.controller;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,7 @@ import com.chronosx.demochatbe.service.UserService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
@@ -46,5 +48,10 @@ public class UserController {
     @GetMapping("/search/{username}")
     public ResponseEntity<List<UserDto>> searchUsers(@PathVariable String username) {
         return ResponseEntity.ok(userService.searchUsers(username));
+    }
+
+    @PostMapping("/avatar")
+    public ResponseEntity<UserDto> uploadAvatar(@RequestParam MultipartFile file, @RequestParam String username) throws IOException {
+        return ResponseEntity.ok(userService.uploadAvatar(file, username));
     }
 }
