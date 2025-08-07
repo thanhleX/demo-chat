@@ -126,4 +126,10 @@ export class UserService {
     else
       return this.timeAgo.transform(members?.[0].lastLogin) ?? '';
   }
+
+  uploadAvatar(formData: FormData): Observable<User> {
+    const url = this.apiUrl + '/avatar';
+    return this.http.post<User>(url, formData);
+  }
+
 }

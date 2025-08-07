@@ -8,6 +8,7 @@ import { MessageContent, MessageType } from '../../../core/interfaces/message-co
 import { Router } from '@angular/router';
 import { MessageRoomMemberService } from '../../../core/services/message-room-member.service';
 import { MessageRoomMember } from '../../../core/interfaces/message-room-member';
+import { ThemeService } from '../../../core/services/theme.service';
 
 @Component({
   selector: 'app-messages',
@@ -22,12 +23,17 @@ export class MessagesComponent {
   messageToSend: MessageContent = {};
   messageRooms: MessageRoom[] = [];
 
+  themeMode: boolean = this.themeService.themeMode === 'dark' ? true : false;
+  themeColor = this.themeService.getGetThemeColorObject(this.themeService.themeColor);
+  themeColors = this.themeService.themeColors;
+
   constructor(
     public userService: UserService,
     private messageRoomService: MessageRoomService,
     private messageContentService: MessageContentService,
     private route: Router,
-    private messageRoomMemberService: MessageRoomMemberService) { }
+    private messageRoomMemberService: MessageRoomMemberService,
+    private themeService: ThemeService) { }
 
   ngOnInit() {
     this.currentUser = this.userService.getFromLocalStoge();
@@ -188,7 +194,11 @@ export class MessagesComponent {
     }, 100);
   }
 
-  findMessageRoomById(roomId?: string) {
+  switchMode(mode: string) {
+    this.themeService.switchMode(mode);
+  }
 
+  switchColor(color: string) {
+    this.themeService.switchColor(color);
   }
 }
