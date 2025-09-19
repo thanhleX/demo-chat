@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.chronosx.demochatbe.dto.UserDto;
 import com.chronosx.demochatbe.service.UserService;
@@ -14,7 +15,6 @@ import com.chronosx.demochatbe.service.UserService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
@@ -51,7 +51,8 @@ public class UserController {
     }
 
     @PostMapping("/avatar")
-    public ResponseEntity<UserDto> uploadAvatar(@RequestParam MultipartFile file, @RequestParam String username) throws IOException {
+    public ResponseEntity<UserDto> uploadAvatar(@RequestParam MultipartFile file, @RequestParam String username)
+            throws IOException {
         return ResponseEntity.ok(userService.uploadAvatar(file, username));
     }
 }

@@ -5,19 +5,19 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import com.chronosx.demochatbe.utils.FileUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.chronosx.demochatbe.dto.UserDto;
 import com.chronosx.demochatbe.entity.User;
 import com.chronosx.demochatbe.enums.UserStatus;
 import com.chronosx.demochatbe.mapper.UserMapper;
 import com.chronosx.demochatbe.repository.UserRepository;
+import com.chronosx.demochatbe.utils.FileUtils;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -91,7 +91,8 @@ public class UserService {
         if (user.isPresent()) {
             if (user.get().getAvatarUrl() != null) {
                 // delete
-                FileUtils.deleteFile("/" + FileUtils.FOLDER_AVATARS + "/" + user.get().getAvatarShortUrl());
+                FileUtils.deleteFile(
+                        "/" + FileUtils.FOLDER_AVATARS + "/" + user.get().getAvatarShortUrl());
 
                 // upload
                 String newFileName = FileUtils.storeFile(file, FileUtils.FOLDER_AVATARS);

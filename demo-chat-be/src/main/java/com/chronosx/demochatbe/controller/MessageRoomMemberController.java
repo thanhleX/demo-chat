@@ -1,14 +1,16 @@
 package com.chronosx.demochatbe.controller;
 
-import com.chronosx.demochatbe.dto.MessageRoomMemberDto;
-import com.chronosx.demochatbe.service.MessageRoomMemberService;
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
+import java.util.UUID;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.UUID;
+import com.chronosx.demochatbe.dto.MessageRoomMemberDto;
+import com.chronosx.demochatbe.service.MessageRoomMemberService;
+
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 
 @RestController
 @RequiredArgsConstructor
