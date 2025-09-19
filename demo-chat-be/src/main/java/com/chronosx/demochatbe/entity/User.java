@@ -3,10 +3,10 @@ package com.chronosx.demochatbe.entity;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.chronosx.demochatbe.utils.FileUtils;
 import jakarta.persistence.*;
 
 import com.chronosx.demochatbe.enums.UserStatus;
+import com.chronosx.demochatbe.utils.FileUtils;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;

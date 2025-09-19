@@ -37,7 +37,8 @@ public class MessageRoomService {
                 .findMessageRoomByMembers(members, members.size())
                 .map(m -> {
                     MessageRoomDto roomDto = messageRoomMapper.toDto(m);
-                    List<MessageRoomMemberDto> membersDto = messageRoomMemberService.findByMessageRoomId(roomDto.getId());
+                    List<MessageRoomMemberDto> membersDto =
+                            messageRoomMemberService.findByMessageRoomId(roomDto.getId());
                     roomDto.setMembers(membersDto);
                     return roomDto;
                 })
@@ -68,17 +69,17 @@ public class MessageRoomService {
             messageRoom.getMembers().add(messageRoomMember);
         });
 
-//        // temp
-//        MessageContent messageContent = MessageContent.builder()
-//                .content("Hello")
-//                .dateSent(LocalDateTime.now())
-//                .messageRoom(messageRoom)
-//                .user(user)
-//                .build();
-//
-//        if (messageRoom.getMessageContents() == null) messageRoom.setMessageContents(new ArrayList<>());
-//
-//        messageRoom.getMessageContents().add(messageContent);
+        //        // temp
+        //        MessageContent messageContent = MessageContent.builder()
+        //                .content("Hello")
+        //                .dateSent(LocalDateTime.now())
+        //                .messageRoom(messageRoom)
+        //                .user(user)
+        //                .build();
+        //
+        //        if (messageRoom.getMessageContents() == null) messageRoom.setMessageContents(new ArrayList<>());
+        //
+        //        messageRoom.getMessageContents().add(messageContent);
 
         MessageRoomDto roomDto = messageRoomMapper.toDto(messageRoomRepository.save(messageRoom));
         List<MessageRoomMemberDto> membersDto = messageRoomMemberService.findByMessageRoomId(roomDto.getId());
@@ -105,10 +106,12 @@ public class MessageRoomService {
     }
 
     public MessageRoomDto findById(UUID roomId) {
-        return messageRoomRepository.findById(roomId)
+        return messageRoomRepository
+                .findById(roomId)
                 .map(room -> {
                     MessageRoomDto roomDto = messageRoomMapper.toDto(room);
-                    List<MessageRoomMemberDto> membersDto = messageRoomMemberService.findByMessageRoomId(roomDto.getId());
+                    List<MessageRoomMemberDto> membersDto =
+                            messageRoomMemberService.findByMessageRoomId(roomDto.getId());
                     roomDto.setMembers(membersDto);
                     return roomDto;
                 })

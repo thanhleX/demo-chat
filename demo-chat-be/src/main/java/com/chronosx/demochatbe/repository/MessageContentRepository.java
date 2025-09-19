@@ -16,15 +16,16 @@ public interface MessageContentRepository extends JpaRepository<MessageContent, 
 
     List<MessageContent> findByMessageRoomIdOrderByDateSent(UUID messageRoomId);
 
-    @Query("""
-                    select count(*)
-                    from MessageContent c
-                    join MessageRoomMember rm
-                        on c.messageRoom = rm.messageRoom
-                    where rm.user.username = :username
-                        and c.messageRoom.id = :roomId
-                        and c.user.username <> :username
-                        and c.dateSent > rm.lastSeen
-            """)
+    @Query(
+            """
+					select count(*)
+					from MessageContent c
+					join MessageRoomMember rm
+						on c.messageRoom = rm.messageRoom
+					where rm.user.username = :username
+						and c.messageRoom.id = :roomId
+						and c.user.username <> :username
+						and c.dateSent > rm.lastSeen
+			""")
     Long countUnseenMessages(UUID roomId, String username);
 }
